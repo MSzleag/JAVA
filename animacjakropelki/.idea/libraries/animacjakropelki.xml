@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="animacjakropelki">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dist/animacjakropelki.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
