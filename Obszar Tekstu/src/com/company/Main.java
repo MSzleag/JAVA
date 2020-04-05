@@ -51,8 +51,28 @@ public class Main extends JFrame
         });
         replace.addActionListener(e ->
                 {
-                    if (podmiana.getText().length() > 0 && obszarTekstowy.getSelectionStart() > 0)
-                         obszarTekstowy.replaceSelection(podmiana.getText());
+                    if (obszarTekstowy.getSelectionStart() == obszarTekstowy.getSelectionEnd())
+                    {
+                        Znajdz.doClick(0);
+                        if ( obszarTekstowy.getSelectionStart() != obszarTekstowy.getSelectionEnd()) {
+                            int option = JOptionPane.showConfirmDialog(rootPane, "Are you willing to replace \"" + szukany.getText() + " on \"" + podmiana.getText() + "\"", "Replace Confirmation", JOptionPane.YES_NO_OPTION);
+
+                            if (option == 0) {
+                                obszarTekstowy.replaceSelection(podmiana.getText());
+                            }
+                        }
+                    }
+
+
+                    else if (obszarTekstowy.getSelectionStart() != obszarTekstowy.getSelectionEnd())
+                    {
+                        obszarTekstowy.requestFocus();
+                        int option = JOptionPane.showConfirmDialog(rootPane, "Are you willing to replace \"" + szukany.getText() + " on \"" + podmiana.getText() + "\"","Replace Confirmation", JOptionPane.YES_NO_OPTION);
+                        if (option == 0)
+                        {
+                            obszarTekstowy.replaceSelection(podmiana.getText());
+                        }
+                    }
 
                 });
 
