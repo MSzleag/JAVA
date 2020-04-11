@@ -16,23 +16,28 @@ public class Main extends JFrame
         JButton buttonStart = (JButton)panelButtonow.add(new JButton("Start"));
         buttonStart.addActionListener(e -> startAnimation());
 
-        JButton buttonUsun = (JButton)panelButtonow.add(new JButton("Usun"));
-        buttonUsun.addActionListener(e -> stopAnimation());
+        JButton buttonStop = (JButton)panelButtonow.add(new JButton("Stop"));
+        buttonStop.addActionListener(e -> stopAnimation());
+
+        JButton buttonDodaj = (JButton)panelButtonow.add(new JButton("Dodaj"));
+        buttonDodaj.addActionListener(e -> dodajAnimation());
 
         this.getContentPane().add(panelAnimacji);
         this.getContentPane().add(panelButtonow,BorderLayout.SOUTH);
         this.setDefaultCloseOperation(3);
     }
 
-    public void startAnimation()
+    public void startAnimation ()
     {
-        panelAnimacji.addKropelka();
+        panelAnimacji.startAnimation();
     }
 
-    public void stopAnimation()
+    public void stopAnimation ()
     {
         panelAnimacji.stop();
     }
+
+    public void dodajAnimation() {panelAnimacji.addKropelka();};
 
     private JPanel panelButtonow = new JPanel();
     private PanelAnimacji panelAnimacji = new PanelAnimacji();
@@ -46,6 +51,8 @@ public class Main extends JFrame
 
     class PanelAnimacji extends JPanel
     {
+        private volatile boolean zatrzymany = false;
+        private Object lock = new Object();
 
         public void addKropelka()
         {
@@ -56,7 +63,19 @@ public class Main extends JFrame
 
         public void stop()
         {
-            grupaWatkow.interrupt();
+            zatrzymany = true;
+        }
+
+        public void startAnimation()
+        {
+            if (zatrzymany)
+            {
+                zatrzymany = false;
+                synchronized (lock)
+                {
+                    lock.notifyAll();
+                }
+            }
         }
 
         @Override
@@ -86,21 +105,34 @@ public class Main extends JFrame
             @Override
             public void run()
             {
-                try {
-                    while (!Thread.currentThread().isInterrupted())
+
+                    while (true)
                     {
+                        synchronized (lock)
+                        {
+                            while (zatrzymany)
+                            {
+                                try
+                                {
+                                    lock.wait();
+                                }
+                                catch (InterruptedException e)
+                                {
+                                    System.out.println(e.getMessage());
+                                }
+                            }
+                        }
                         this.kropelka.ruszKropelka(ten);
                         repaint();
-
-                        Thread.sleep(2);
+                        try
+                        {
+                            Thread.sleep(2);
+                        }
+                        catch (InterruptedException e)
+                        {
+                            System.out.println(e.getMessage());
+                        }
                     }
-                }
-                catch(InterruptedException e)
-                {
-
-                    listaKropelek.clear();
-                    repaint();
-                }
             }
             Kropelka kropelka;
         }
