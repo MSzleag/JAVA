@@ -4,8 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.sql.SQLOutput;
 
 public class Gameplay extends JPanel
 {
@@ -23,7 +21,6 @@ public class Gameplay extends JPanel
         this.setBackground(Color.BLACK);
 
         snakeThread = new Thread(new SnakeRunnable(snake));
-
         snakeThread.start();
 
         this.addKeyListener(new KeyAdapter() {
@@ -45,6 +42,7 @@ public class Gameplay extends JPanel
         {
             lock.notifyAll();
         }
+
     }
 
     public void stopAnimation() { stop = true; }
@@ -142,12 +140,14 @@ public class Gameplay extends JPanel
 
                     this.snake.snakeMovement(thisPanel);
                     this.snake.snakeEat();
+
                     repaint();
 
                     try
                     {
                         Thread.sleep(15);
                     }
+
                     catch (InterruptedException ex)
                     {
                         System.out.println("Stopped");

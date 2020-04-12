@@ -7,7 +7,6 @@ import java.util.Random;
 
 public class Snake
 {
-
     private int speed = 5;
     static int score = 0;
 
@@ -75,7 +74,6 @@ public class Snake
         }
 
     }
-
 
     static final String directory = "assets" + File.separator;
 
