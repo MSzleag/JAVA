@@ -41,6 +41,7 @@ public class Snake
     public void snakeMovement (JPanel container)
     {
         Rectangle rectangle = container.getBounds();
+
         if (movingRight)
         {
             image = rightmouth;
@@ -48,6 +49,7 @@ public class Snake
             y += 0;
             if (x >= rectangle.getMaxX()) x = (int)rectangle.getMinX();
         }
+
         if (movingLeft)
         {
             image = leftmouth;
@@ -55,6 +57,7 @@ public class Snake
             y += 0;
             if (x <= rectangle.getMinX()) x = (int)rectangle.getMaxX();
         }
+
         if (movingUp)
         {
             image = upmouth;
@@ -62,6 +65,7 @@ public class Snake
             y += -speed;
             if (y <= rectangle.getMinY()) y = (int)rectangle.getMaxY();
         }
+
         if (movingDown)
         {
             image = downmouth;
