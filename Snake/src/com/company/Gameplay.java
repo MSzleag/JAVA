@@ -11,6 +11,7 @@ public class Gameplay extends JPanel
 {
     private Snake snake = new Snake();
     private Thread snakeThread = new Thread();
+
     private Object lock = new Object();
     private volatile boolean stop = true;
 
@@ -22,6 +23,7 @@ public class Gameplay extends JPanel
         this.setBackground(Color.BLACK);
 
         snakeThread = new Thread(new SnakeRunnable(snake));
+
         snakeThread.start();
 
         this.addKeyListener(new KeyAdapter() {
@@ -34,47 +36,6 @@ public class Gameplay extends JPanel
 
     }
 
-    public class SnakeRunnable implements Runnable
-    {
-        Snake snake;
-        public SnakeRunnable(Snake snake)
-        {
-            this.snake = snake;
-        }
-        @Override
-        public void run()
-        {
-            while (true) //DEATH TODO
-            {
-
-                synchronized (lock)
-                {
-                    while (stop)
-                    {
-                        try {
-                            lock.wait();
-                        }
-                        catch (InterruptedException e)
-                        {
-                            System.out.println(e.getMessage());
-                        }
-                    }
-
-                    this.snake.snakeMovement(thisPanel);
-                    repaint();
-
-                    try
-                    {
-                        Thread.sleep(15);
-                    }
-                    catch (InterruptedException ex)
-                    {
-                        System.out.println("Stopped");
-                    }
-                }
-            }
-        }
-    }
 
     public void startAnimation()
     {
@@ -147,6 +108,55 @@ public class Gameplay extends JPanel
     public void paint(Graphics g) {
         super.paint(g);
         g.drawImage(Snake.getImg(),snake.getX(),snake.getY(),null);
+
+            g.drawImage(Snake.getFood(),snake.getFoodX(),snake.getFoodY(),null);
+
     }
+
+    public class SnakeRunnable implements Runnable
+    {
+        Snake snake;
+        public SnakeRunnable(Snake snake)
+        {
+            this.snake = snake;
+        }
+        @Override
+        public void run()
+        {
+            while (true) //DEATH TODO
+            {
+
+                synchronized (lock)
+                {
+                    while (stop)
+                    {
+                        try
+                        {
+                            lock.wait();
+                        }
+                        catch (InterruptedException e)
+                        {
+                            System.out.println(e.getMessage());
+                        }
+                    }
+
+                    this.snake.snakeMovement(thisPanel);
+                    this.snake.snakeEat();
+                    repaint();
+
+                    try
+                    {
+                        Thread.sleep(15);
+                    }
+                    catch (InterruptedException ex)
+                    {
+                        System.out.println("Stopped");
+                    }
+
+                }
+            }
+        }
+    }
+
 }
 
