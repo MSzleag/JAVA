@@ -32,10 +32,11 @@ public class Gameplay extends JPanel implements ActionListener
     private int foodX = random.nextInt(850 - 25) + 25;
     private int foodY = random.nextInt(575 - 75) + 75;
 
-    private static boolean movingRight = false;
-    private static boolean movingLeft = false;
-    private static boolean movingUp = false;
-    private static boolean movingDown = false;
+    private volatile boolean movingRight = false;
+    private volatile boolean movingLeft = false;
+    private volatile boolean movingUp = false;
+    private volatile boolean movingDown = false;
+    private boolean dead = false;
 
     int move = 0;
 
@@ -163,99 +164,72 @@ public class Gameplay extends JPanel implements ActionListener
     {
         timer.start();
         snakeEating();
-        if (movingRight)
-        {
-            for(int i = lengthOfSnake -1; i >= 0 ; i--)
-            {
-                snakeY[i+1] = snakeY[i];
-            }
-            for (int i = lengthOfSnake ; i >= 0 ; i--)
-            {
-                if (i == 0)
-                {
-                    snakeX[i] += 25;
+        while(!dead) {
+            if (movingRight) {
+                for (int i = lengthOfSnake - 1; i >= 0; i--) {
+                    snakeY[i + 1] = snakeY[i];
                 }
-
-                else
-                {
-                    snakeX[i] = snakeX[i-1];
-                }
-                if (snakeX[i] > 850) snakeX[i] = 25;
-            }
-            repaint();
-        }
-
-        if (movingLeft)
-        {
-
-                for(int i = lengthOfSnake -1; i >= 0 ; i--)
-                {
-                    snakeY[i+1] = snakeY[i];
-                }
-                for (int i = lengthOfSnake ; i >= 0 ; i--)
-                {
-                    if (i == 0)
-                    {
-                        snakeX[i] -= 25;
+                for (int i = lengthOfSnake; i >= 0; i--) {
+                    if (i == 0) {
+                        snakeX[i] += 25;
+                    } else {
+                        snakeX[i] = snakeX[i - 1];
                     }
+                    if (snakeX[i] > 850) snakeX[i] = 25;
+                }
+                repaint();
+            }
 
-                    else
-                    {
-                        snakeX[i] = snakeX[i-1];
+            if (movingLeft) {
+
+                for (int i = lengthOfSnake - 1; i >= 0; i--) {
+                    snakeY[i + 1] = snakeY[i];
+                }
+                for (int i = lengthOfSnake; i >= 0; i--) {
+                    if (i == 0) {
+                        snakeX[i] -= 25;
+                    } else {
+                        snakeX[i] = snakeX[i - 1];
                     }
                     if (snakeX[i] < 25) snakeX[i] = 850;
                 }
                 repaint();
-        }
+            }
 
-        if (movingUp)
-        {
+            if (movingUp) {
 
-                for(int i = lengthOfSnake -1; i >= 0 ; i--)
-                {
-                    snakeX[i+1] = snakeX[i];
+                for (int i = lengthOfSnake - 1; i >= 0; i--) {
+                    snakeX[i + 1] = snakeX[i];
                 }
-                for (int i = lengthOfSnake ; i >= 0 ; i--)
-                {
-                    if (i == 0)
-                    {
+                for (int i = lengthOfSnake; i >= 0; i--) {
+                    if (i == 0) {
                         snakeY[i] -= 25;
-                    }
-
-                    else
-                    {
-                        snakeY[i] = snakeY[i-1];
+                    } else {
+                        snakeY[i] = snakeY[i - 1];
                     }
                     if (snakeY[i] < 75) snakeY[i] = 575;
                 }
                 repaint();
 
+            }
 
-        }
+            if (movingDown) {
 
-        if (movingDown)
-        {
-
-                for(int i = lengthOfSnake -1; i >= 0 ; i--)
-                {
-                    snakeX[i+1] = snakeX[i];
+                for (int i = lengthOfSnake - 1; i >= 0; i--) {
+                    snakeX[i + 1] = snakeX[i];
                 }
-                for (int i = lengthOfSnake ; i >= 0 ; i--)
-                {
-                    if (i == 0)
-                    {
+                for (int i = lengthOfSnake; i >= 0; i--) {
+                    if (i == 0) {
                         snakeY[i] += 25;
-                    }
-
-                    else
-                    {
-                        snakeY[i] = snakeY[i-1];
+                    } else {
+                        snakeY[i] = snakeY[i - 1];
                     }
                     if (snakeY[i] > 625) snakeY[i] = 75;
                 }
                 repaint();
-        }
+            }
 
+        }
     }
     public void snakeEating()
     {
