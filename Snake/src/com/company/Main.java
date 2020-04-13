@@ -23,6 +23,6 @@ public class Main //extends JFrame
         frame.add(gameplay,BorderLayout.CENTER);
         gameplay.setFocusable(true);
         gameplay.requestFocusInWindow();
-        frame.setDefaultCloseOperation(3);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 }
