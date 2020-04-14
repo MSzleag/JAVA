@@ -20,7 +20,7 @@ public class Gameplay extends JPanel implements ActionListener
     private ImageIcon downmouth = new ImageIcon(directory + "downmouth.png");
     private ImageIcon snakeTail = new ImageIcon(directory + "snakeimage.png");
     private ImageIcon food = new ImageIcon( directory + "enemy.png");
-    private Icon startIcon = new ImageIcon(this.getClass().getResource("snake.png"));
+    private Icon startIcon = new ImageIcon(directory + "snake.png");
 
     private Timer timer;
     private int delay;
