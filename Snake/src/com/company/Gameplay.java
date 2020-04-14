@@ -6,24 +6,30 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.util.Random;
 
 
 public class Gameplay extends JPanel implements ActionListener
 {
-
-    private ImageIcon titleImage;
-    private ImageIcon rightmouth = new ImageIcon("rightmouth.png");
-    private ImageIcon leftmouth = new ImageIcon("leftmouth.png");
-    private ImageIcon upmouth = new ImageIcon("upmouth.png");
-    private ImageIcon downmouth = new ImageIcon("downmouth.png");
-    private ImageIcon snakeTail = new ImageIcon("snakeimage.png");
-    private ImageIcon food = new ImageIcon("enemy.png");
+    Object directory = "assets" + File.separator;
+    private ImageIcon titleImage = new ImageIcon(directory + "snaketitle.jpg");
+    private ImageIcon rightmouth = new ImageIcon(directory + "rightmouth.png");
+    private ImageIcon leftmouth = new ImageIcon(directory + "leftmouth.png");
+    private ImageIcon upmouth = new ImageIcon(directory + "upmouth.png");
+    private ImageIcon downmouth = new ImageIcon(directory + "downmouth.png");
+    private ImageIcon snakeTail = new ImageIcon(directory + "snakeimage.png");
+    private ImageIcon food = new ImageIcon( directory + "enemy.png");
+    private Icon startIcon = new ImageIcon(this.getClass().getResource("snake.png"));
 
     private Timer timer;
-    private int delay = 100;
+    private int delay;
+
+    private Object[] possibilities = {"easy", "medium" , "hard", "insane"};
+    private String level;
 
     private int lengthOfSnake = 3;
+    private static int score = 0;
 
     private int[] snakeX = new int[750];
     private int[] snakeY = new int[750];
@@ -40,10 +46,9 @@ public class Gameplay extends JPanel implements ActionListener
 
     int move = 0;
 
-
-
     Gameplay() {
 
+        difficulty();
 
         this.addKeyListener(new KeyAdapter() {
             @Override
@@ -78,7 +83,7 @@ public class Gameplay extends JPanel implements ActionListener
         g.drawRect(24,10,851,55);
 
 
-        titleImage = new ImageIcon("snaketitle.jpg");
+
         titleImage.paintIcon(this, g , 25, 11);
 
 
@@ -112,11 +117,26 @@ public class Gameplay extends JPanel implements ActionListener
 
         }
         g.dispose();
-
     }
     private void keyPressedHandler(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
 
+            if (dead)
+            {
+                move = 0;
+                lengthOfSnake = 3;
+                timer.restart();
+                score = 0;
+                dead = false;
+                repaint();
+            }
+
+            else
+            {
+                if (timer.isRunning())
+                    timer.stop();
+                else timer.start();
+            }
         }
 
         if (e.getKeyCode() == KeyEvent.VK_UP) {
@@ -162,88 +182,136 @@ public class Gameplay extends JPanel implements ActionListener
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        timer.start();
         snakeEating();
-        while(!dead) {
-            if (movingRight) {
-                for (int i = lengthOfSnake - 1; i >= 0; i--) {
-                    snakeY[i + 1] = snakeY[i];
-                }
-                for (int i = lengthOfSnake; i >= 0; i--) {
-                    if (i == 0) {
-                        snakeX[i] += 25;
-                    } else {
-                        snakeX[i] = snakeX[i - 1];
-                    }
-                    if (snakeX[i] > 850) snakeX[i] = 25;
-                }
-                repaint();
+        snakeMoving();
+        snakeDeath();
+    }
+
+    public void snakeMoving()
+    {
+        if (movingRight) {
+            for (int i = lengthOfSnake - 1; i >= 0; i--) {
+                snakeY[i + 1] = snakeY[i];
             }
-
-            if (movingLeft) {
-
-                for (int i = lengthOfSnake - 1; i >= 0; i--) {
-                    snakeY[i + 1] = snakeY[i];
+            for (int i = lengthOfSnake; i >= 0; i--) {
+                if (i == 0) {
+                    snakeX[i] += 25;
+                } else {
+                    snakeX[i] = snakeX[i - 1];
                 }
-                for (int i = lengthOfSnake; i >= 0; i--) {
-                    if (i == 0) {
-                        snakeX[i] -= 25;
-                    } else {
-                        snakeX[i] = snakeX[i - 1];
-                    }
-                    if (snakeX[i] < 25) snakeX[i] = 850;
-                }
-                repaint();
+                if (snakeX[i] > 850) snakeX[i] = 25;
             }
+            repaint();
+        }
 
-            if (movingUp) {
+        if (movingLeft) {
 
-                for (int i = lengthOfSnake - 1; i >= 0; i--) {
-                    snakeX[i + 1] = snakeX[i];
-                }
-                for (int i = lengthOfSnake; i >= 0; i--) {
-                    if (i == 0) {
-                        snakeY[i] -= 25;
-                    } else {
-                        snakeY[i] = snakeY[i - 1];
-                    }
-                    if (snakeY[i] < 75) snakeY[i] = 575;
-                }
-                repaint();
-
+            for (int i = lengthOfSnake - 1; i >= 0; i--) {
+                snakeY[i + 1] = snakeY[i];
             }
-
-            if (movingDown) {
-
-                for (int i = lengthOfSnake - 1; i >= 0; i--) {
-                    snakeX[i + 1] = snakeX[i];
+            for (int i = lengthOfSnake; i >= 0; i--) {
+                if (i == 0) {
+                    snakeX[i] -= 25;
+                } else {
+                    snakeX[i] = snakeX[i - 1];
                 }
-                for (int i = lengthOfSnake; i >= 0; i--) {
-                    if (i == 0) {
-                        snakeY[i] += 25;
-                    } else {
-                        snakeY[i] = snakeY[i - 1];
-                    }
-                    if (snakeY[i] > 625) snakeY[i] = 75;
-                }
-                repaint();
+                if (snakeX[i] < 25) snakeX[i] = 850;
             }
+            repaint();
+        }
+
+        if (movingUp) {
+
+            for (int i = lengthOfSnake - 1; i >= 0; i--) {
+                snakeX[i + 1] = snakeX[i];
+            }
+            for (int i = lengthOfSnake; i >= 0; i--) {
+                if (i == 0) {
+                    snakeY[i] -= 25;
+                } else {
+                    snakeY[i] = snakeY[i - 1];
+                }
+                if (snakeY[i] < 75) snakeY[i] = 625;
+            }
+            repaint();
 
         }
+
+        if (movingDown) {
+
+            for (int i = lengthOfSnake - 1; i >= 0; i--) {
+                snakeX[i + 1] = snakeX[i];
+            }
+            for (int i = lengthOfSnake; i >= 0; i--) {
+                if (i == 0) {
+                    snakeY[i] += 25;
+                } else {
+                    snakeY[i] = snakeY[i - 1];
+                }
+                if (snakeY[i] > 625) snakeY[i] = 75;
+            }
+            repaint();
+        }
     }
+
     public void snakeEating()
     {
-        Rectangle foodArea = new Rectangle(foodX + 5 ,foodY + 5 ,food.getIconWidth() - 5,food.getIconHeight() - 5);
+        Rectangle foodArea = new Rectangle(foodX + 10 ,foodY + 10 ,food.getIconWidth() - 10,food.getIconHeight() - 10);
         Rectangle snakeArea = new Rectangle(snakeX[0] + 5 , snakeY[0] + 5 ,rightmouth.getIconWidth() - 5, rightmouth.getIconHeight() - 5);
 
         if (snakeArea.intersects(foodArea))
         {
+            if (level.equals("insane"))
+                lengthOfSnake += 4;
+
+            else if(level.equals("hard"))
+                lengthOfSnake += 2;
+
+            else
+                lengthOfSnake++;
+
             foodX = random.nextInt(850 - 25) + 25;
             foodY = random.nextInt(575 - 75) + 75;
-            lengthOfSnake++;
+            score += 10;
         }
     }
 
+    public void snakeDeath()
+    {
+        Rectangle snakeArea = new Rectangle(snakeX[0] + 5 , snakeY[0] + 5 ,rightmouth.getIconWidth() - 5, rightmouth.getIconHeight() - 5);
+        for (int i = 3; i < lengthOfSnake ; i++)
+        {
+            Rectangle snakeTailArea = new Rectangle(snakeX[i]+5, snakeY[i]+5,snakeTail.getIconWidth(),snakeTail.getIconHeight() -5);
+            if (snakeArea.intersects(snakeTailArea))
+            {
+                timer.stop();
+                dead = true;
+                JOptionPane.showMessageDialog(this, "Your Score is: " + score +
+                        " on " + level + " level" +  "\n" + "Click Ok and press Space to try again");
+            }
+
+        }
+    }
+
+    public void difficulty()
+    {
+
+        level = (String)JOptionPane.showInputDialog(
+                this,"Start the game","Choose diffucult level",
+                JOptionPane.PLAIN_MESSAGE,startIcon,possibilities,"easy");
+
+        if (level.equals("easy"))
+            delay = 100;
+
+        if(level.equals("medium"))
+            delay = 70;
+
+        if(level.equals("hard"))
+            delay = 40;
+
+        if(level.equals("insane"))
+            delay = 20;
+    }
 }
 
 
