@@ -1,0 +1,9 @@
+ spring:
+  h2.console:
+    enabled: true
+    path: '/console'
+  datasource:
+    url: 'jdbc:h2:file:/C:/JAVA/TODO_App/tododb'
+  jpa:
+    hibernate:
+      ddl-auto: validate

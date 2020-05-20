@@ -1,0 +1,18 @@
+package github.MSzleag.adapter;
+
+import github.MSzleag.model.Project;
+import github.MSzleag.model.ProjectRepository;
+import github.MSzleag.model.TaskGroup;
+import github.MSzleag.model.TaskGroupRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+interface SqlProjectRepository extends ProjectRepository, JpaRepository<Project, Integer> {
+    @Override
+    @Query("select distinct p from Project p join fetch p.steps")
+    List<Project> findAll();
+}
